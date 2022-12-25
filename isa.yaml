@@ -1,0 +1,40 @@
+
+instructions:
+  - push: [reg]
+  - pop: [reg]
+  - fill: [word, reg]
+  - call: [reg]
+  - jump: [word] # ip relative unconditional jump
+  - add: [reg, reg, reg]
+  - sub: [reg, reg, reg]
+
+  - loadbyte: [reg, reg]
+  - loadword: [reg, reg]
+  - storebyte: [reg, reg]
+  - storeword: [reg, reg]
+
+  - loadsym: [word, reg]
+
+  - nop: []
+  - debug: []
+
+
+registers: [
+  ip,
+  sp,
+  fp,
+  rv,
+  cond,
+
+  a1, a2, a3, a4,
+
+  r1, r2, r3, r4
+]
+
+symbols:
+  visibility: [public, private]
+  type: [function, data]
+  linkage: [internal, external]
+
+architecture:
+  pagesize: 128
