@@ -1,15 +1,22 @@
 # #!/usr/bin/env python3
 
 
-from filewriter import CodeFileWriter
+from filewriter import CodeFileWriter, StandardOutWriter
 from isaconfig import ISAConfig
 from rustgenerator import RustGenerator
+from cppgenerator import CppGenerator
 
 config = ISAConfig.from_file('isa.yaml')
 
-formatter = CodeFileWriter('virtualmachine/src/gen.rs')
-RustGenerator(config, formatter).generate()
-formatter.write()
+rust_writer = CodeFileWriter('virtualmachine/src/gen.rs')
+RustGenerator(config, rust_writer).generate()
+rust_writer.write()
+
+cpp_writer = StandardOutWriter()
+CppGenerator(config, cpp_writer).generate()
+cpp_writer.write()
+
+
 
 # import sys
 # from enum import Enum

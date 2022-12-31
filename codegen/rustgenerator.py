@@ -15,7 +15,7 @@ class RustGenerator:
     def generate(self):
         self._generate_registers_enum()
         self._generate_instructions_enum()
-    
+
 
     def _generate_registers_enum(self):
         self._output.indent(0)
@@ -27,8 +27,8 @@ class RustGenerator:
             self._output.append(f'{regname.capitalize()},')
         self._output.indent(0)
         self._output.append('}')
-        self._output.append(f'const NUM_REGISTERS: usize = {len(registers)};')
-    
+        self._output.append(f'pub const NUM_REGISTERS: usize = {len(registers)};')
+
     def _generate_instructions_enum(self):
         self._output.indent(0)
         self._output.append('\n#[derive(Debug, Clone, Copy)]')
@@ -65,4 +65,4 @@ class RustGenerator:
             'reg': ('u8', 1),
             'word': ('i32', 4)
         }[arg]
-    
+

@@ -1,40 +1,74 @@
 
-instructions:
-  - push: [reg]
-  - pop: [reg]
-  - fill: [word, reg]
-  - call: [reg]
-  - jump: [word] # ip relative unconditional jump
-  - add: [reg, reg, reg]
-  - sub: [reg, reg, reg]
+# Autochthon is a 32 bit, load and store architecture
+#
+#
 
+
+
+instructions:
+
+  # [Memory Access Instructions]
+  #
+  # Memory can be read/written in either 1 or 4 byte chunks
   - loadbyte: [reg, reg]
   - loadword: [reg, reg]
   - storebyte: [reg, reg]
   - storeword: [reg, reg]
 
+  # The symbol table contains a list of (index, address) pairs
   - loadsym: [word, reg]
 
+  - push: [reg]
+  - pop: [reg]
+  - fill: [word, reg]
+  - call: [reg]
+  - jump: [word] # ip relative unconditional jump
+  - je: [word]
+  - jne: [word]
+
+  # [Arithmetic Instructions]
+  - add: [reg, reg, reg]
+  - sub: [reg, reg, reg]
+  - mul: [reg, reg, reg]
+  - div: [reg, reg, reg]
+
+  # [IO Instructions]
+  - ioreadbyte: [reg]
+  - iowritebyte: [reg]
+
   - nop: []
+
+  # Dump the contents of memory and registers to stdout of the interpreter
   - debug: []
 
 
 registers: [
+  # The instruction pointer holds the address of the currently executing instruction
   ip,
+  # The stack pointer is manipulated by push, pop, call, and ret instructions
   sp,
+  # The frame pointer is technically general purpose
   fp,
+  # "Return Value" for function calls
   rv,
+  # "Condition" register, holds the result of the last test instruction
   cond,
-
+  # "Argument" registers, which are used to pass arguments to functions
   a1, a2, a3, a4,
-
+  # "Register" registers, general purpose
   r1, r2, r3, r4
 ]
 
 symbols:
+  # Only public symbols can be linked with
   visibility: [public, private]
   type: [function, data]
+  # Internal linkage means that the symbol is defined in this module
+  # External linkage means that this symbol needs to be resolved and needs
+  #  to be provided by another module
   linkage: [internal, external]
 
 architecture:
   pagesize: 128
+
+# Module

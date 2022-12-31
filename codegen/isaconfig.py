@@ -2,11 +2,12 @@
 from typing import List, Tuple
 import yaml
 
-'''
+
+class ISAConfig:
+    '''
     Parse the /isa.yaml definition into its sections for consumption
     by the code generators.
-'''
-class ISAConfig:
+    '''
 
     @staticmethod
     def from_file(filename: str):
@@ -30,9 +31,9 @@ class ISAConfig:
             if any(arg != 'reg' and arg != 'word' for arg in args):
                 raise AssertionError(f'Invalid instruction argument: {ent}')
             return (instr_name, args)
-        
+
         return list(map(tupleize_and_validate, self._parsed['instructions']))
-    
+
     def registers(self) -> List[str]:
         return self._parsed['registers']
 

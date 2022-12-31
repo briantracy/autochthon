@@ -27,7 +27,6 @@ class CodeFileWriter:
 
 
 class StandardOutWriter(CodeFileWriter):
-    
     def __init__(self):
         super().__init__('')
 

@@ -1,4 +1,7 @@
 virtualmachine/target
+virtualmachine/src/gen.rs
+
 codegen/__pycache__
 
 .vscode/
+
