@@ -18,9 +18,11 @@ instructions:
   # The symbol table contains a list of (index, address) pairs
   - loadsym: [word, reg]
 
+  # Put a literal value into a register
+  - fill: [word, reg]
+
   - push: [reg]
   - pop: [reg]
-  - fill: [word, reg]
   - call: [reg]
   - jump: [word] # ip relative unconditional jump
   - je: [word]
@@ -47,7 +49,8 @@ registers: [
   ip,
   # The stack pointer is manipulated by push, pop, call, and ret instructions
   sp,
-  # The frame pointer is technically general purpose
+  # The frame pointer is technically general purpose, but the blessed calling
+  # convention uses it to point to the start of each function's stack frame
   fp,
   # "Return Value" for function calls
   rv,
@@ -60,9 +63,9 @@ registers: [
 ]
 
 symbols:
+  type: [function, data]
   # Only public symbols can be linked with
   visibility: [public, private]
-  type: [function, data]
   # Internal linkage means that the symbol is defined in this module
   # External linkage means that this symbol needs to be resolved and needs
   #  to be provided by another module
@@ -71,4 +74,15 @@ symbols:
 architecture:
   pagesize: 128
 
-# Module
+# Module Layout
+#
+
+# Symbol Table
+# The symbol table for a module is a list of tuples:
+#  (type[1byte], visibility[1byte], linkage[1byte], location[4byte])
+
+# Dynamically Allocated Memory
+# maybe have an instruction (newpage) that fetches a new page and returns its address?
+# the standard library could then have a malloc function that calls this on startup and
+# stores the base address of the heap
+

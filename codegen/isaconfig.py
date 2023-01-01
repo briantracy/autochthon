@@ -37,6 +37,9 @@ class ISAConfig:
     def registers(self) -> List[str]:
         return self._parsed['registers']
 
+    def pagesize(self) -> int:
+        return int(self._parsed['architecture']['pagesize'])
+
 
 
 if __name__ == '__main__':

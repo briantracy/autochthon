@@ -17,7 +17,6 @@ CppGenerator(config, cpp_writer).generate()
 cpp_writer.write()
 
 
-
 # import sys
 # from enum import Enum
 
