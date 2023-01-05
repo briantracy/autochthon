@@ -15,6 +15,7 @@ class RustGenerator:
     def generate(self):
         self._generate_registers_enum()
         self._generate_instructions_enum()
+        self._generate_constants()
 
 
     def _generate_registers_enum(self):
@@ -39,6 +40,11 @@ class RustGenerator:
         self._output.indent(0)
         self._output.append('}')
         self._output.append(f'pub const LARGEST_INSTRUCTION_SIZE: usize = {self._longest_instruction()};')
+
+    def _generate_constants(self):
+        self._output.indent(0)
+        self._output.append('')
+        self._output.append(f'pub const PAGE_SIZE: usize = {self._config.pagesize()};')
 
     def _generate_single_instruction(self, name: str, args) -> str:
         params = self._convert_instruction_args_to_rust_params(args)

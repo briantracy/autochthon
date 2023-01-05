@@ -15,7 +15,8 @@ instructions:
   - storebyte: [reg, reg]
   - storeword: [reg, reg]
 
-  # The symbol table contains a list of (index, address) pairs
+  # Load the location of the nth symbol into a register.
+  # Useful for calls across module boundaries
   - loadsym: [word, reg]
 
   # Put a literal value into a register
@@ -24,6 +25,10 @@ instructions:
   - push: [reg]
   - pop: [reg]
   - call: [reg]
+
+  # [Branch Instructions]
+  - test: [reg] # test a register against 0
+  - cmp: [reg, reg] # compare to registers (first - second)
   - jump: [word] # ip relative unconditional jump
   - je: [word]
   - jne: [word]
@@ -33,6 +38,7 @@ instructions:
   - sub: [reg, reg, reg]
   - mul: [reg, reg, reg]
   - div: [reg, reg, reg]
+  - mod: [reg, reg, reg]
 
   # [IO Instructions]
   - ioreadbyte: [reg]
@@ -86,3 +92,9 @@ architecture:
 # the standard library could then have a malloc function that calls this on startup and
 # stores the base address of the heap
 
+
+# Paged Memory
+# Memory is paged and each page has a writeable bit. Executability is the opposite
+# of writeability.
+# Writes to unmapped pages are allowed, and bring new pages in.
+# Reads from unmapped pages are an exception.
