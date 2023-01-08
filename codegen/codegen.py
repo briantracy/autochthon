@@ -16,6 +16,7 @@ cpp_writer = StandardOutWriter()
 CppGenerator(config, cpp_writer).generate()
 cpp_writer.write()
 
+print(config.symbol_info())
 
 # import sys
 # from enum import Enum

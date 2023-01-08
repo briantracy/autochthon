@@ -69,7 +69,7 @@ registers: [
 ]
 
 symbols:
-  type: [function, data]
+  kind: [function, data]
   # Only public symbols can be linked with
   visibility: [public, private]
   # Internal linkage means that the symbol is defined in this module

@@ -6,6 +6,7 @@ mod symbol;
 mod memory;
 use symbol::*;
 
+
 fn main() {
     let j = Symbol {
         visibility: Visibility::Public,
@@ -13,6 +14,8 @@ fn main() {
         kind: Kind::Data,
         location: 0x100
     };
-    let p = memory::Page::new(true);
-    println!("Hello, world!: {:?}, {:?}", j, p.is_executable());
+
+    let j = gen::Foo::Bar::Baz;
+
+
 }

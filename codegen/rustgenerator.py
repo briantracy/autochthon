@@ -16,6 +16,7 @@ class RustGenerator:
         self._generate_registers_enum()
         self._generate_instructions_enum()
         self._generate_constants()
+        self._generate_symbol_enums()
 
 
     def _generate_registers_enum(self):
@@ -71,4 +72,19 @@ class RustGenerator:
             'reg': ('u8', 1),
             'word': ('i32', 4)
         }[arg]
+
+    def _generate_symbol_enums(self):
+        self._output.append('')
+        self._output.append('pub mod Symbol {')
+        self._output.indent(1)
+        for (enum_name, cases) in self._config.symbol_info().items():
+            self._output.append('#[derive(Copy, Clone, Debug)]')
+            self._output.append(f'pub enum {enum_name.capitalize()} {{')
+            self._output.indent(2)
+            for case in cases:
+                self._output.append(f'{case.capitalize()},')
+            self._output.indent(1)
+            self._output.append('}')
+        self._output.indent(0)
+        self._output.append('}')
 

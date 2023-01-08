@@ -1,5 +1,5 @@
 
-from typing import List, Tuple
+from typing import List, Tuple, Mapping
 import yaml
 
 
@@ -39,6 +39,9 @@ class ISAConfig:
 
     def pagesize(self) -> int:
         return int(self._parsed['architecture']['pagesize'])
+
+    def symbol_info(self) -> Mapping[str, List[str]]:
+        return self._parsed['symbols']
 
 
 
