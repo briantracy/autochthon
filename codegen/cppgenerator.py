@@ -21,19 +21,17 @@ class CppGenerator:
         self._output.append('')
 
     def _generate_opcode_enum(self):
-        self._output.indent(0)
         self._output.append('enum class Opcode : uint8_t {')
-        self._output.indent(1)
+        self._output.indent()
         for (idx, (name, _)) in enumerate(self._config.instructions()):
             self._output.append(f'{name.capitalize()} = {idx},')
-        self._output.indent(0)
+        self._output.outdent()
         self._output.append('}')
 
     def _generate_registers_enum(self):
-        self._output.indent(0)
         self._output.append('enum class Register : uint8_t {')
-        self._output.indent(1)
+        self._output.indent()
         for (idx, name) in enumerate(self._config.registers()):
             self._output.append(f'{name.capitalize()} = {idx},')
-        self._output.indent(0)
+        self._output.outdent()
         self._output.append('}')

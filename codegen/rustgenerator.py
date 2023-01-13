@@ -20,31 +20,27 @@ class RustGenerator:
 
 
     def _generate_registers_enum(self):
-        self._output.indent(0)
         self._output.append('\n#[derive(Debug, Clone, Copy)]')
         self._output.append('pub enum Register {')
-        self._output.indent(1)
+        self._output.indent()
         registers = self._config.registers()
         for regname in registers:
             self._output.append(f'{regname.capitalize()},')
-        self._output.indent(0)
+        self._output.outdent()
         self._output.append('}')
         self._output.append(f'pub const NUM_REGISTERS: usize = {len(registers)};')
 
     def _generate_instructions_enum(self):
-        self._output.indent(0)
         self._output.append('\n#[derive(Debug, Clone, Copy)]')
         self._output.append('pub enum Instruction {')
-        self._output.indent(1)
+        self._output.indent()
         for (name, args) in self._config.instructions():
             self._output.append(self._generate_single_instruction(name, args))
-        self._output.indent(0)
+        self._output.outdent()
         self._output.append('}')
         self._output.append(f'pub const LARGEST_INSTRUCTION_SIZE: usize = {self._longest_instruction()};')
 
     def _generate_constants(self):
-        self._output.indent(0)
-        self._output.append('')
         self._output.append(f'pub const PAGE_SIZE: usize = {self._config.pagesize()};')
 
     def _generate_single_instruction(self, name: str, args) -> str:
@@ -76,15 +72,15 @@ class RustGenerator:
     def _generate_symbol_enums(self):
         self._output.append('')
         self._output.append('pub mod Symbol {')
-        self._output.indent(1)
+        self._output.indent()
         for (enum_name, cases) in self._config.symbol_info().items():
             self._output.append('#[derive(Copy, Clone, Debug)]')
             self._output.append(f'pub enum {enum_name.capitalize()} {{')
-            self._output.indent(2)
+            self._output.indent()
             for case in cases:
                 self._output.append(f'{case.capitalize()},')
-            self._output.indent(1)
+            self._output.outdent()
             self._output.append('}')
-        self._output.indent(0)
+        self._output.outdent()
         self._output.append('}')
 

@@ -11,8 +11,10 @@ class CodeFileWriter:
         self._buffer = ''
         self._indent = 0
 
-    def indent(self, level: int):
-        self._indent = level
+    def indent(self):
+        self._indent += 1
+    def outdent(self):
+        self._indent -= 1
 
     def append(self, line: str):
         self._buffer += (self._tab() + line + '\n')
