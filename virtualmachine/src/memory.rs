@@ -1,7 +1,17 @@
 
-use std::collections::HashMap;
 
 use crate::gen::PAGE_SIZE;
+
+
+#[derive(Debug, Copy, Clone)]
+pub enum MemoryAccessError {
+    ReadUnmapped,
+    IllegalAddress
+}
+pub trait Memory {
+    fn get_bytes(&self, start: usize, length: usize) -> Result<Vec<u8>, MemoryAccessError>;
+    fn set_bytes(&mut self, start: usize, bytes: &[u8]) -> Option<MemoryAccessError>;
+}
 
 struct Page {
     writeable: bool,
@@ -19,13 +29,11 @@ impl Page {
     pub fn is_executable(&self) -> bool { !self.is_writeable() }
 }
 
-pub enum MemoryAccessError {
-    ReadFromUnmappedPage
-}
 
-pub struct Memory {
-    pages: HashMap<usize, Page>
-}
+
+// pub struct PagedMemory {
+//     pages: HashMap<usize, Page>
+// }
 
 pub struct DebugMemory {
     memory: [u8; 1000]
@@ -35,8 +43,20 @@ impl DebugMemory {
     pub fn new() -> Self {
         Self { memory: [0; 1000] }
     }
+}
 
+impl Memory for DebugMemory {
 
+    fn get_bytes(&self, start: usize, length: usize) -> Result<Vec<u8>, MemoryAccessError> {
+        let mut buff: Vec<u8> = Vec::new();
+        buff.extend_from_slice(&self.memory[start..start + length]);
+        Ok(buff)
+    }
+
+    fn set_bytes(&mut self, start: usize, bytes: &[u8]) -> Option<MemoryAccessError> {
+        &self.memory[start..start + bytes.len()].copy_from_slice(bytes);
+        None
+    }
 }
 
 
