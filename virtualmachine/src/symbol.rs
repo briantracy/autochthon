@@ -1,56 +1,58 @@
 
 
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-#[repr(u8)]
-pub enum Visibility {
-    Public,
-    Private
-}
+// #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+// #[repr(u8)]
+// pub enum Visibility {
+//     Public,
+//     Private
+// }
 
-impl Visibility {
-    fn from_byte(byte: u8) -> Option<Self> {
-        match byte {
-            b if b == (Self::Public as u8) => Some(Self::Public),
-            b if b == (Self::Private as u8) => Some(Self::Private),
-            _ => None
-        }
-    }
-}
+// impl Visibility {
+//     fn from_byte(byte: u8) -> Option<Self> {
+//         match byte {
+//             b if b == (Self::Public as u8) => Some(Self::Public),
+//             b if b == (Self::Private as u8) => Some(Self::Private),
+//             _ => None
+//         }
+//     }
+// }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-#[repr(u8)]
-pub enum Linkage {
-    Internal,
-    External
-}
+// #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+// #[repr(u8)]
+// pub enum Linkage {
+//     Internal,
+//     External
+// }
 
-impl Linkage {
-    fn from_byte(byte: u8) -> Option<Self> {
-        match byte {
-            b if b == (Self::Internal as u8) => Some(Self::Internal),
-            b if b == (Self::External as u8) => Some(Self::External),
-            _ => None
-        }
-    }
-}
+// impl Linkage {
+//     fn from_byte(byte: u8) -> Option<Self> {
+//         match byte {
+//             b if b == (Self::Internal as u8) => Some(Self::Internal),
+//             b if b == (Self::External as u8) => Some(Self::External),
+//             _ => None
+//         }
+//     }
+// }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-#[repr(u8)]
-pub enum Kind {
-    Function,
-    Data
-}
+// #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+// #[repr(u8)]
+// pub enum Kind {
+//     Function,
+//     Data
+// }
 
-impl Kind {
-    fn from_byte(byte: u8) -> Option<Self> {
-        match byte {
-            b if b == (Self::Function as u8) => Some(Self::Function),
-            b if b == (Self::Data as u8) => Some(Self::Data),
-            _ => None
-        }
-    }
-}
+// impl Kind {
+//     fn from_byte(byte: u8) -> Option<Self> {
+//         match byte {
+//             b if b == (Self::Function as u8) => Some(Self::Function),
+//             b if b == (Self::Data as u8) => Some(Self::Data),
+//             _ => None
+//         }
+//     }
+// }
+
+use crate::gen::symbol::*;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Symbol {

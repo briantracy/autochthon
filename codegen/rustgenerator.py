@@ -71,14 +71,30 @@ class RustGenerator:
 
     def _generate_symbol_enums(self):
         self._output.append('')
-        self._output.append('pub mod Symbol {')
+        self._output.append('pub mod symbol {')
         self._output.indent()
         for (enum_name, cases) in self._config.symbol_info().items():
-            self._output.append('#[derive(Copy, Clone, Debug)]')
+            self._output.append('#[derive(Debug, Clone, Copy, PartialEq, Eq)]')
+            self._output.append('#[repr(u8)]')
             self._output.append(f'pub enum {enum_name.capitalize()} {{')
             self._output.indent()
             for case in cases:
                 self._output.append(f'{case.capitalize()},')
+            self._output.outdent()
+            self._output.append('}')
+            self._output.append(f'impl {enum_name.capitalize()} {{')
+            self._output.indent()
+            self._output.append('pub fn from_byte(byte: u8) -> Option<Self> {')
+            self._output.indent()
+            self._output.append('match byte {')
+            self._output.indent()
+            for case in cases:
+                self._output.append(f'b if b == (Self::{case.capitalize()} as u8) => Some(Self::{case.capitalize()}),')
+            self._output.append('_ => None')
+            self._output.outdent()
+            self._output.append('}')
+            self._output.outdent()
+            self._output.append('}')
             self._output.outdent()
             self._output.append('}')
         self._output.outdent()
