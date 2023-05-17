@@ -8,13 +8,13 @@
 
 struct Memory {
 
-    virtual VMWord readWord(VMWord address) const = 0;
-    virtual void writeWord(VMWord address, VMWord word) = 0;
+    virtual HostWord readWord(HostWord address) const = 0;
+    virtual void writeWord(HostWord address, HostWord word) = 0;
 
-    virtual VMByte readByte(VMWord address) const = 0;
-    virtual void writeByte(VMWord address, VMByte byte) = 0;
+    virtual VMByte readByte(HostWord address) const = 0;
+    virtual void writeByte(HostWord address, VMByte byte) = 0;
 
-    virtual void map(VMWord startAddress, const std::vector<VMByte> &bytes) = 0;
+    virtual void map(HostWord startAddress, const std::vector<VMByte> &bytes) = 0;
 };
 
 
@@ -23,7 +23,7 @@ class DebugMemory : public Memory {
     std::vector<VMByte> rawMemory_;
 
 public:
-    VMWord readWord(VMWord address) const override;
+    HostWord readWord(HostWord address) const override;
 };
 
 #endif
