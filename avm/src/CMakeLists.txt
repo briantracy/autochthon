@@ -8,11 +8,11 @@ project(AutochthonVirtualMachine)
 #  4. The fuzz binary (links to libfuzz, libavm)
 
 
-file(GLOB libSources lib/*.h lib/*.cpp)
+file(GLOB libSources lib/include/libavm/*.h lib/*.cpp)
 add_library(avm ${libSources})
 target_compile_features(avm PUBLIC cxx_std_20)
 set_target_properties(avm PROPERTIES CXX_EXTENSIONS OFF)
-target_compile_options(avm PUBLIC
+target_compile_options(avm PRIVATE
     -Wall -Wextra -Wpedantic
     -Wconversion -Wuninitialized
     -fstack-protector-strong
@@ -22,10 +22,11 @@ target_compile_options(avm PUBLIC
 target_link_options(avm PUBLIC
     -fsanitize=address
 )
+target_include_directories(avm PRIVATE lib/include)
 
 
 add_executable(avmdriver driver/main.cpp)
-target_include_directories(avmdriver PRIVATE .)
+target_include_directories(avmdriver PRIVATE lib/include)
 target_link_libraries(avmdriver avm)
 
 
@@ -39,7 +40,7 @@ enable_testing()
 
 file(GLOB testSources test/*.cpp)
 add_executable(testTarget ${testSources})
-target_include_directories(testTarget PRIVATE .)
+target_include_directories(testTarget PRIVATE lib/include)
 target_link_libraries(testTarget GTest::gtest_main avm)
 include(GoogleTest)
 gtest_discover_tests(testTarget)

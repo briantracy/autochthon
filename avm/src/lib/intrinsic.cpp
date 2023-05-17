@@ -1,8 +1,6 @@
 
 
-#include "intrinsic.h"
-
-#include <cstring>
+#include <libavm/intrinsic.h>
 
 namespace Intrinsic {
     HostWord toHostWord(VMWord vmword) {

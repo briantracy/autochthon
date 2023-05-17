@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include <lib/symbol.h>
+#include <libavm/symbol.h>
 
 int main(int argc, char *argv[]) {
 

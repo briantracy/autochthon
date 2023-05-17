@@ -2,9 +2,9 @@
 #ifndef AVM_MEMORY_H
 #define AVM_MEMORY_H
 
-#include <vector>
+#include <libavm/intrinsic.h>
 
-#include "intrinsic.h"
+#include <vector>
 
 struct Memory {
 

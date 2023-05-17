@@ -1,3 +1,3 @@
 
-#include "symbol.h"
+#include <libavm/symbol.h>
 
