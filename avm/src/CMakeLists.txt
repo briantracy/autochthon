@@ -1,35 +1,41 @@
 cmake_minimum_required(VERSION 3.22)
 project(AutochthonVirtualMachine)
 
+# Suggested cmake invocation:
+# cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -S src -B build
+
 # There are four targets:
 #  1. The avm library (most code here)
 #  2. The avm driver binary (just a main method, links to libavm)
 #  3. The test binary (google test, links to libavm)
 #  4. The fuzz binary (links to libfuzz, libavm)
 
+if (NOT NO_SANITIZERS)
+    add_compile_options(-fsanitize=address,undefined)
+    add_link_options(-fsanitize=address,undefined)
+endif()
 
+### libavm
 file(GLOB libSources lib/include/libavm/*.h lib/*.cpp)
 add_library(avm ${libSources})
-target_compile_features(avm PUBLIC cxx_std_20)
+target_compile_features(avm PUBLIC cxx_std_17)
 set_target_properties(avm PROPERTIES CXX_EXTENSIONS OFF)
 target_compile_options(avm PRIVATE
     -Wall -Wextra -Wpedantic
     -Wconversion -Wuninitialized
     -fstack-protector-strong
-    -fsanitize=address
     -fdiagnostics-show-template-tree
-)
-target_link_options(avm PUBLIC
-    -fsanitize=address
 )
 target_include_directories(avm PRIVATE lib/include)
 
 
+### avmdriver
 add_executable(avmdriver driver/main.cpp)
 target_include_directories(avmdriver PRIVATE lib/include)
 target_link_libraries(avmdriver avm)
 
 
+### avmtest
 include(FetchContent)
 FetchContent_Declare(
   googletest
@@ -39,9 +45,11 @@ FetchContent_MakeAvailable(googletest)
 enable_testing()
 
 file(GLOB testSources test/*.cpp)
-add_executable(testTarget ${testSources})
-target_include_directories(testTarget PRIVATE lib/include)
-target_link_libraries(testTarget GTest::gtest_main avm)
+add_executable(avmtest ${testSources})
+target_include_directories(avmtest PRIVATE lib/include)
+target_link_libraries(avmtest GTest::gtest_main avm)
 include(GoogleTest)
-gtest_discover_tests(testTarget)
+gtest_discover_tests(avmtest)
 
+
+### avmfuzz
