@@ -53,6 +53,7 @@
 // }
 
 use crate::gen::symbol::*;
+use crate::bits;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Symbol {
@@ -63,14 +64,80 @@ pub struct Symbol {
     pub name: String // 1 byte in module (for size) + size bytes
 }
 
+trait BinaryDeserializable<T> {
+    /// Deserialize a structure from the given bytes, starting at the given
+    /// starting index. If successful, return the object and the number of bytes
+    /// consumed.
+    /// TODO: should this take an offset into the slice that represents the current
+    /// progress into a larger byte array?
+    fn from_bytes(bytes: &[u8]) -> Option<(T, usize)>;
+}
+
+trait BinarySerializable<T> {
+    fn from_bytes(bytes: &[u8], starting_from: usize) -> Option<(T, usize)>;
+
+    fn to_bytes(&self, buffer: &mut Vec<u8>);
+}
+
+impl BinaryDeserializable<u32> for u32 {
+    fn from_bytes(bytes: &[u8]) -> Option<(u32, usize)> {
+        todo!()
+    }
+}
+
+impl BinarySerializable<u32> for u32 {
+    fn from_bytes(bytes: &[u8], starting_from: usize) -> Option<(u32, usize)> {
+        todo!()
+    }
+
+    fn to_bytes(&self, buffer: &mut Vec<u8>) {
+        todo!()
+    }
+}
+
+impl BinarySerializable<Symbol> for Symbol {
+    fn from_bytes(bytes: &[u8], starting_from: usize) -> Option<(Symbol, usize)> {
+        let mut sym = Symbol {
+
+            kind: Kind::Data,
+            visibility: Visibility::Private,
+            linkage: Linkage::External,
+            location: 0,
+            name: "asf".to_owned()
+        };
+        let mut index = starting_from;
+
+        Some((sym, 0))
+    }
+
+    fn to_bytes(&self, buffer: &mut Vec<u8>) {
+        // We are running into an issue here where I do not know at what level
+        // to draw the line of who is responsible for serializing what.
+        // for example, should a u32 know how to serialize itself?
+        // should I generate serialiation code for each of teh symbol enums?
+        buffer.extend_from_slice(&[
+            self.visibility as u8,
+            self.linkage as u8,
+            self.kind as u8
+        ]);
+
+    }
+}
+
 const SYMBOL_DATA_MIN_SIZE: usize = 8;
 
 impl Symbol {
 
+    // This is kind of disgusting (with the magic numbers and what not)
     pub fn from_bytes(bytes: &[u8]) -> Option<Self> {
+        let mut total: usize = 0;
+        let (val, size) = u32::from_bytes(bytes)?;
+        total += size;
+        let (val2, size2) = u32::from_bytes(&bytes[total..])?;
         if bytes.len() < SYMBOL_DATA_MIN_SIZE {
             return None;
         }
+        let x = u32::from_bytes(&[1]);
         let name_length = bytes[7] as usize;
         println!("name length = {:?}", name_length);
         if bytes.len() < SYMBOL_DATA_MIN_SIZE + name_length {
@@ -83,6 +150,24 @@ impl Symbol {
         return Some(Self {
             visibility, linkage, kind, location: 12u32, name
         })
+    }
+}
+
+pub struct SymbolTable {
+    symbols: Vec<Symbol>
+}
+
+impl SymbolTable {
+
+    pub fn from_bytes(bytes: &[u8]) -> Option<Self> {
+        if bytes.len() < 4 { return None; }
+        let num_symbols = bits::interpret_big_endian_slice(&bytes[0..4]);
+        if num_symbols < 0 { return None; }
+        let mut symbols: Vec<Symbol> = Vec::new();
+        for i in 0..num_symbols {
+
+        }
+        None
     }
 }
 

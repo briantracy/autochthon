@@ -16,7 +16,7 @@ instructions:
   - storeword: [reg, reg]
 
   # Load the location of the nth symbol into a register.
-  # Useful for calls across module boundaries
+  # Useful for calls across module boundaries and data access
   - loadsym: [word, reg]
 
   # Put a literal value into a register
@@ -48,6 +48,7 @@ instructions:
 
   # Dump the contents of memory and registers to stdout of the interpreter
   - debug: []
+  - exit: []
 
 
 registers: [
@@ -75,17 +76,26 @@ symbols:
   # Internal linkage means that the symbol is defined in this module
   # External linkage means that this symbol needs to be resolved and needs
   #  to be provided by another module
+  #
   linkage: [internal, external]
 
 architecture:
   pagesize: 128
 
 # Module Layout
-#
+# Module's need a name, which is appended to all symbols
+# how do we handle symbol names?
 
 # Symbol Table
 # The symbol table for a module is a list of tuples:
 #  (type[1byte], visibility[1byte], linkage[1byte], location[4byte])
+# The location is an offset into the data segment of the module
+
+# Module A: 'foo': (Function, Public, Internal, 0x100)
+#           'bar': (Data, Private, Internal, 0x200)
+# Module B: 'A::foo': (Function, Public, External, -1)
+# <LINK>
+# Module C: 'A::foo': (Function, Public, Internal, 0x100)
 
 # Dynamically Allocated Memory
 # maybe have an instruction (newpage) that fetches a new page and returns its address?
@@ -98,3 +108,12 @@ architecture:
 # of writeability.
 # Writes to unmapped pages are allowed, and bring new pages in.
 # Reads from unmapped pages are an exception.
+# Ideally, the program is unaware of paging
+
+# For fetching instructions, we could peek 1 byte from memory, then determine
+# (based on opcode) how many more bytes to request
+
+# IO
+# read and write byte to stdio
+# How does read string work? How do endlines get entered (see ~/test/test.c)
+# It looks like both ^D and newline "submit" bytes to the process from the shell?

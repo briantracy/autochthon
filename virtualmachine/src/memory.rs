@@ -9,8 +9,14 @@ pub enum MemoryAccessError {
     IllegalAddress
 }
 pub trait Memory {
-    fn get_bytes(&self, start: usize, length: usize) -> Result<Vec<u8>, MemoryAccessError>;
-    fn set_bytes(&mut self, start: usize, bytes: &[u8]) -> Option<MemoryAccessError>;
+    fn get_word(&self, address: usize) -> Result<[u8; 4], MemoryAccessError>;
+    fn get_byte(&self, address: usize) -> Result<u8, MemoryAccessError>;
+    fn set_word(&mut self, address: usize, word: [u8; 4]) -> Result<(), MemoryAccessError>;
+    fn set_byte(&mut self, address: usize, byte: u8) -> Result<(), MemoryAccessError>;
+
+    /// Used to load in parts of the program
+    fn map(&mut self, start: usize, bytes: &[u8]) -> Result<(), MemoryAccessError>;
+
 }
 
 struct Page {
@@ -46,16 +52,51 @@ impl DebugMemory {
 }
 
 impl Memory for DebugMemory {
-
-    fn get_bytes(&self, start: usize, length: usize) -> Result<Vec<u8>, MemoryAccessError> {
-        let mut buff: Vec<u8> = Vec::new();
-        buff.extend_from_slice(&self.memory[start..start + length]);
-        Ok(buff)
+    fn get_word(&self, address: usize) -> Result<[u8; 4], MemoryAccessError> {
+        let mut word = [0u8; 4];
+        word.copy_from_slice(&self.memory[address..address + 4]);
+        Ok(word)
     }
 
-    fn set_bytes(&mut self, start: usize, bytes: &[u8]) -> Option<MemoryAccessError> {
-        &self.memory[start..start + bytes.len()].copy_from_slice(bytes);
-        None
+    fn get_byte(&self, address: usize) -> Result<u8, MemoryAccessError> {
+        todo!()
+    }
+
+    fn set_word(&mut self, address: usize, word: [u8; 4]) -> Result<(), MemoryAccessError> {
+        self.memory[address..address+4].copy_from_slice(&word);
+        Ok(())
+    }
+
+    fn set_byte(&mut self, address: usize, byte: u8) -> Result<(), MemoryAccessError> {
+        todo!()
+    }
+
+    fn map(&mut self, start: usize, bytes: &[u8]) -> Result<(), MemoryAccessError> {
+        todo!()
+    }
+
+    // fn get_bytes(&self, start: usize, length: usize) -> Result<Vec<u8>, MemoryAccessError> {
+    //     let mut buff: Vec<u8> = Vec::new();
+    //     buff.extend_from_slice(&self.memory[start..start + length]);
+    //     Ok(buff)
+    // }
+
+    // fn set_bytes(&mut self, start: usize, bytes: &[u8]) -> Result<(), MemoryAccessError> {
+    //     self.memory[start..start + bytes.len()].copy_from_slice(bytes);
+    //     Ok(())
+    // }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn simple_write_read() {
+        let mut mem: Box<dyn Memory> = Box::new(DebugMemory::new());
+        mem.set_word(0, [1,2,3,4]).expect("write failed");
+        let bytes = mem.get_word(0).expect("read failed");
+        assert_eq!(&bytes[..], &[1,2,3,4]);
     }
 }
 
