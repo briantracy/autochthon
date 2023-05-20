@@ -18,4 +18,14 @@ TEST(MemoryTest, debugMemory) {
 
     mem.writeWord(5, {0x0a, 0x0b, 0x0c, 0x0d});
     EXPECT_EQ(0x0a0b0c0d, Intrinsic::toHostWord(mem.readWord(5)));
+
+    EXPECT_THROW(mem.writeByte(0, 0xAA), MemoryError);
+    EXPECT_THROW(mem.writeByte(10, 0xAA), MemoryError);
+    EXPECT_THROW(mem.writeByte(-1, 0xAA), MemoryError);
+    constexpr VMWord word = {0xa, 0xb, 0xc, 0xd};
+    EXPECT_THROW(mem.writeWord(addressSpaceSize - 3, word), MemoryError);
+    EXPECT_THROW(mem.writeWord(addressSpaceSize - 2, word), MemoryError);
+    EXPECT_THROW(mem.writeWord(addressSpaceSize - 1, word), MemoryError);
+    EXPECT_THROW(mem.writeWord(0, word), MemoryError);
+    EXPECT_THROW(mem.writeWord(0, word), MemoryError);
 }

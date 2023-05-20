@@ -4,6 +4,7 @@
 
 #include <libavm/intrinsic.h>
 
+#include <stdint.h>
 #include <stdexcept>
 #include <vector>
 
