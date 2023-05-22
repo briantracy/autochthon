@@ -1,6 +1,5 @@
 
-
-#include "libavm/intrinsic.h"
+#include <libavm/intrinsic.h>
 #include <libavm/memory.h>
 
 #include <algorithm>
