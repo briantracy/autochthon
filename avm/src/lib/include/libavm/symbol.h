@@ -35,6 +35,8 @@ struct SymbolError : public std::runtime_error {
 class SymbolTable {
     std::vector<Symbol> symbols_;
 public:
+    static SymbolTable fromBytes(const std::vector<VMByte> &bytes, size_t begin, size_t end);
+
     HostWord loadSymbol(HostWord index) const;
 };
 

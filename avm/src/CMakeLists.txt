@@ -22,7 +22,8 @@ target_compile_features(avm PUBLIC cxx_std_17)
 set_target_properties(avm PROPERTIES CXX_EXTENSIONS OFF)
 target_compile_options(avm PRIVATE
     -Wall -Wextra -Wpedantic
-    -Wconversion -Wuninitialized
+    -Wconversion -Wshadow -Wfloat-equal
+    -Wundef -Wcast-align
     -fstack-protector-strong
     -fdiagnostics-show-template-tree
 )
