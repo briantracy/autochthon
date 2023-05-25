@@ -24,4 +24,6 @@ namespace Intrinsic {
     VMWord fromHostWord(HostWord hostWord);
 }
 
+// #define AVM_ASSERT(cond)
+
 #endif

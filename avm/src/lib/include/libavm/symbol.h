@@ -45,6 +45,7 @@ public:
 
     HostWord loadSymbol(HostWord index) const;
     bool operator==(const SymbolTable &other) const { return symbols_ == other.symbols_; }
+    std::string description() const;
 };
 
 #endif

@@ -10,15 +10,16 @@
 #include <string_view>
 #include <vector>
 
-class Program {
-    SymbolTable symbols_;
-    std::vector<VMByte> data_;
-    std::vector<VMByte> code_;
-    void parse(const std::vector<VMByte> &rawBytes);
-public:
+struct Program {
+    SymbolTable symbols;
+    std::vector<VMByte> data;
+    std::vector<VMByte> code;
+
     Program() = delete;
     explicit Program(const std::vector<VMByte> &rawBytes);
     explicit Program(std::string_view filePath);
+private:
+    void parse(const std::vector<VMByte> &rawBytes);
 };
 
 struct ProgramLoadError : public std::runtime_error {

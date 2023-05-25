@@ -12,7 +12,7 @@
 namespace ProgramDetail {
 
 struct ProgramOffsets {
-    size_t symbolTable, dataSection, codeSection;
+    HostWord symbolTable, dataSection, codeSection;
 };
 
 ProgramOffsets parseSectionLocations(const std::vector<VMByte> &program) {
@@ -27,11 +27,7 @@ ProgramOffsets parseSectionLocations(const std::vector<VMByte> &program) {
         symbolTableStart >= static_cast<int64_t>(program.size())) {
         throw ProgramLoadError{"Invalid section locations (symtab, data, code), programSize: "};
     }
-    return ProgramOffsets{
-        static_cast<size_t>(symbolTableStart),
-        static_cast<size_t>(dataSectionStart),
-        static_cast<size_t>(codeSectionStart)
-    };
+    return ProgramOffsets{symbolTableStart, dataSectionStart, codeSectionStart};
 }
 
 
@@ -45,8 +41,20 @@ Program::Program(std::string_view filePath) {
 Program::Program(const std::vector<VMByte> &rawBytes) {
     parse(rawBytes);
 }
-
+#include <iostream>
 void Program::parse(const std::vector<VMByte> &rawBytes) {
     const auto offsets = ProgramDetail::parseSectionLocations(rawBytes);
 
+    symbols = SymbolTable::fromBytes(rawBytes,
+        static_cast<size_t>(offsets.symbolTable), static_cast<size_t>(offsets.dataSection));
+
+    data.resize(static_cast<size_t>(offsets.codeSection - offsets.dataSection));
+    std::copy(rawBytes.cbegin() + offsets.dataSection,
+        rawBytes.cbegin() + offsets.codeSection,
+        data.begin());
+
+    code.resize(rawBytes.size() - static_cast<size_t>(offsets.codeSection));
+    std::copy(rawBytes.cbegin() + offsets.codeSection,
+        rawBytes.cend(),
+        code.begin());
 }

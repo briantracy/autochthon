@@ -1,20 +1,12 @@
 
+#include <ios>
 #include <libavm/intrinsic.h>
 #include <libavm/symbol.h>
 
 #include <cassert>
 #include <stdint.h>
 #include <string>
-
-bool Symbol::operator==(const Symbol &other) const {
-    return location == other.location &&
-        kind == other.kind && linkage == other.linkage &&
-        visibility == other.visibility && name == other.name;
-}
-
-std::string Symbol::description() const {
-    return "Symbol{location=" + std::to_string(location) + "name=" + name + "}";
-}
+#include <sstream>
 
 namespace SymbolDetail {
 
@@ -36,6 +28,53 @@ Symbol::Visibility validateSymbolVisibility(VMByte byte) {
     }
     return static_cast<Symbol::Visibility>(byte);
 }
+
+std::string kindString(Symbol::Kind kind) {
+    switch (kind) {
+    case Symbol::Kind::Function: return "function";
+    case Symbol::Kind::Data: return     "data    ";
+    default: throw SymbolError{"invalid symbol kind: " + std::to_string(static_cast<uint8_t>(kind))};
+    }
+}
+std::string linkageString(Symbol::Linkage linkage) {
+    switch (linkage) {
+    case Symbol::Linkage::Internal: return "internal";
+    case Symbol::Linkage::External: return "external";
+    default: throw SymbolError{"invalid symbol linkage: " + std::to_string(static_cast<uint8_t>(linkage))};
+    }
+}
+std::string visibilityString(Symbol::Visibility vis) {
+    switch (vis) {
+    case Symbol::Visibility::Public: return  "public ";
+    case Symbol::Visibility::Private: return "private";
+    default: throw SymbolError{"invalid symbol visibility: " + std::to_string(static_cast<uint8_t>(vis))};
+    }
+}
+
+}
+
+bool Symbol::operator==(const Symbol &other) const {
+    return location == other.location &&
+        kind == other.kind && linkage == other.linkage &&
+        visibility == other.visibility && name == other.name;
+}
+
+std::string Symbol::description() const {
+    std::stringstream ss;
+    ss << "0x" << std::hex << static_cast<uint32_t>(location) << ' '
+        << SymbolDetail::kindString(kind) << ' '
+        << SymbolDetail::linkageString(linkage) << ' '
+        << SymbolDetail::visibilityString(visibility) << ' '
+        << '`' << name << '\'';
+    return ss.str();
+}
+
+std::string SymbolTable::description() const {
+    std::stringstream ss;
+    for (const auto &symbol : symbols_) {
+        ss << symbol.description() << '\n';
+    }
+    return ss.str();
 }
 
 HostWord SymbolTable::loadSymbol(HostWord index) const {
@@ -46,7 +85,7 @@ HostWord SymbolTable::loadSymbol(HostWord index) const {
 }
 
 SymbolTable SymbolTable::fromBytes(const std::vector<VMByte> &bytes, size_t begin, size_t onePastEnd) {
-    assert(begin < onePastEnd);
+    assert(begin <= onePastEnd);
     SymbolTable table;
     size_t i = begin;
     // A single symbol is at least this large (the name needs to be one character + NUL)

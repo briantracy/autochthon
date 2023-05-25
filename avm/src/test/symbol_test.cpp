@@ -21,14 +21,20 @@ TEST(SymbolTest, SymbolTableParse) {
 
     EXPECT_EQ(SymbolTable::fromBytes({
         0x01, 0x23, 0x45, 0x67, 0x0, 0x1, 0x1, 'm', 'a', 'i', 'n', '\0', // 12
-        0x01, 0x23, 0x45, 0x67, 0x0, 0x0, 0x0, 'x', 'y', '\0', // 10
-        0x01, 0x23, 0x45, 0x67, 0x1, 0x1, 0x1, 'q', 'w', 'e', 'r', 't', 'y', 'z', '\0', // 15
+        0xFF, 0xFF, 0xFF, 0xFF, 0x0, 0x0, 0x0, 'x', 'y', '\0', // 10
+        0x00, 0x00, 0x00, 0x01, 0x1, 0x1, 0x1, 'q', 'w', 'e', 'r', 't', 'y', 'z', '\0', // 15
     }, 0, 37), SymbolTable({
         Symbol{0x01234567, Symbol::Kind::Function, Symbol::Linkage::External,
             Symbol::Visibility::Private, "main"},
-        Symbol{0x01234567, Symbol::Kind::Function, Symbol::Linkage::Internal,
+        Symbol{-1, Symbol::Kind::Function, Symbol::Linkage::Internal,
             Symbol::Visibility::Public, "xy"},
-        Symbol{0x01234567, Symbol::Kind::Data, Symbol::Linkage::External,
+        Symbol{1, Symbol::Kind::Data, Symbol::Linkage::External,
             Symbol::Visibility::Private, "qwertyz"}
     }));
+
+    EXPECT_THROW(SymbolTable::fromBytes({
+        0x01, 0x23, 0x45, 0x67, 0x0, 0x1, 0x1, 'm', 'a', 'i', 'n', '\0', // 12
+        0x01, 0x23, 0x45, 0x67, 0x0, 0x0, 0x0, 'x', 'y', '\0', // 10
+        0x01, 0x23, 0x45, 0x67, 0x1, 0x1, 0x1, 'q', 'w', 'e', 'r', 't', 'y', 'z', '\0', // 15
+    }, 0, 33), SymbolError); // no space for final null terminator
 }
