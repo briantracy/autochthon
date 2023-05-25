@@ -7,6 +7,7 @@
 #include <stdexcept>
 #include <stdint.h>
 #include <string>
+#include <utility>
 #include <vector>
 
 struct Symbol {
@@ -26,6 +27,9 @@ struct Symbol {
     } visibility;
 
     std::string name;
+
+    bool operator==(const Symbol &) const;
+    std::string description() const;
 };
 
 struct SymbolError : public std::runtime_error {
@@ -35,9 +39,12 @@ struct SymbolError : public std::runtime_error {
 class SymbolTable {
     std::vector<Symbol> symbols_;
 public:
-    static SymbolTable fromBytes(const std::vector<VMByte> &bytes, size_t begin, size_t end);
+    SymbolTable() = default;
+    SymbolTable(std::vector<Symbol> s) : symbols_{std::move(s)} {}
+    static SymbolTable fromBytes(const std::vector<VMByte> &bytes, size_t begin, size_t onePastEnd);
 
     HostWord loadSymbol(HostWord index) const;
+    bool operator==(const SymbolTable &other) const { return symbols_ == other.symbols_; }
 };
 
 #endif

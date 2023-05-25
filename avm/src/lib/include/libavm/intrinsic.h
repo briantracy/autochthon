@@ -24,5 +24,4 @@ namespace Intrinsic {
     VMWord fromHostWord(HostWord hostWord);
 }
 
-
 #endif

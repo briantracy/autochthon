@@ -24,7 +24,7 @@ target_compile_options(avm PRIVATE
     -Wall -Wextra -Wpedantic
     -Wconversion -Wshadow -Wfloat-equal
     -Wundef -Wcast-align
-    -fstack-protector-strong
+    -fstack-protector-strong -fvisibility=hidden
     -fdiagnostics-show-template-tree
 )
 target_include_directories(avm PRIVATE lib/include)
@@ -47,6 +47,7 @@ enable_testing()
 
 file(GLOB testSources test/*.cpp)
 add_executable(avmtest ${testSources})
+target_compile_options(avmtest PRIVATE -fvisibility=hidden)
 target_include_directories(avmtest PRIVATE lib/include)
 target_link_libraries(avmtest GTest::gtest_main avm)
 include(GoogleTest)

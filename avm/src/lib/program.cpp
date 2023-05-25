@@ -1,5 +1,5 @@
 
-#include "libavm/symbol.h"
+#include <libavm/symbol.h>
 #include <libavm/intrinsic.h>
 #include <libavm/program.h>
 
