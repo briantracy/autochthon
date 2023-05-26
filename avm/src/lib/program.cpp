@@ -22,10 +22,15 @@ ProgramOffsets parseSectionLocations(const std::vector<VMByte> &program) {
     const HostWord symbolTableStart = Intrinsic::toHostWord({program.at(0), program.at(1), program.at(2), program.at(3)});
     const HostWord dataSectionStart = Intrinsic::toHostWord({program.at(4), program.at(5), program.at(6), program.at(7)});
     const HostWord codeSectionStart = Intrinsic::toHostWord({program.at(8), program.at(9), program.at(10), program.at(11)});
-    if (symbolTableStart < 0 || dataSectionStart < 0 || codeSectionStart < 0 ||
-        symbolTableStart > dataSectionStart || dataSectionStart > codeSectionStart ||
-        symbolTableStart >= static_cast<int64_t>(program.size())) {
-        throw ProgramLoadError{"Invalid section locations (symtab, data, code), programSize: "};
+    if (symbolTableStart < 0 || dataSectionStart < 0 || codeSectionStart < 0) {
+        throw ProgramLoadError{"negative section locations"};
+    }
+    if (symbolTableStart > dataSectionStart || dataSectionStart > codeSectionStart) {
+        throw ProgramLoadError{"non increasing section locations"};
+    }
+    if (const int64_t progSize = static_cast<int64_t>(program.size());
+        symbolTableStart > progSize || dataSectionStart > progSize || codeSectionStart > progSize) {
+        throw ProgramLoadError{"sections point out of bounds of program"};
     }
     return ProgramOffsets{symbolTableStart, dataSectionStart, codeSectionStart};
 }
@@ -41,20 +46,25 @@ Program::Program(std::string_view filePath) {
 Program::Program(const std::vector<VMByte> &rawBytes) {
     parse(rawBytes);
 }
-#include <iostream>
 void Program::parse(const std::vector<VMByte> &rawBytes) {
     const auto offsets = ProgramDetail::parseSectionLocations(rawBytes);
 
     symbols = SymbolTable::fromBytes(rawBytes,
         static_cast<size_t>(offsets.symbolTable), static_cast<size_t>(offsets.dataSection));
 
-    data.resize(static_cast<size_t>(offsets.codeSection - offsets.dataSection));
-    std::copy(rawBytes.cbegin() + offsets.dataSection,
-        rawBytes.cbegin() + offsets.codeSection,
-        data.begin());
+    if (const auto dataSectionSize = offsets.codeSection - offsets.dataSection;
+        dataSectionSize > 0) {
+        data.resize(static_cast<size_t>(dataSectionSize));
+        std::copy(rawBytes.cbegin() + offsets.dataSection,
+            rawBytes.cbegin() + offsets.codeSection,
+            data.begin());
+    }
 
-    code.resize(rawBytes.size() - static_cast<size_t>(offsets.codeSection));
-    std::copy(rawBytes.cbegin() + offsets.codeSection,
+    if (const auto codeSectionSize = static_cast<int64_t>(rawBytes.size()) - offsets.codeSection;
+        codeSectionSize > 0) {
+        code.resize(static_cast<size_t>(codeSectionSize));
+        std::copy(rawBytes.cbegin() + offsets.codeSection,
         rawBytes.cend(),
         code.begin());
+    }
 }

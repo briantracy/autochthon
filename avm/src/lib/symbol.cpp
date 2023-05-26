@@ -92,9 +92,9 @@ SymbolTable SymbolTable::fromBytes(const std::vector<VMByte> &bytes, size_t begi
     constexpr size_t SYMBOL_MIN_SIZE = sizeof(VMWord) + sizeof(Symbol::Kind) +
         sizeof(Symbol::Linkage) + sizeof(Symbol::Visibility) + 2;
     while (true) {
-        if (i >= onePastEnd - 1) { break; }
+        if (i + 1 >= onePastEnd) { break; }
         if (i + SYMBOL_MIN_SIZE >= onePastEnd) {
-            throw SymbolError{"not enough space left for symbol: i=" + std::to_string(i)};
+            throw SymbolError{"not enough space left for symbol: i=" + std::to_string(i) + " end:" + std::to_string(onePastEnd)};
         }
         const HostWord location = Intrinsic::toHostWord({
             bytes.at(i), bytes.at(i + 1), bytes.at(i + 2), bytes.at(i + 3)

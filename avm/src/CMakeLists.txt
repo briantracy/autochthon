@@ -55,3 +55,7 @@ gtest_discover_tests(avmtest)
 
 
 ### avmfuzz
+# add_executable(avmfuzz fuzz/fuzzer.cpp)
+# target_link_libraries(avmfuzz avm)
+# target_include_directories(avmfuzz PRIVATE lib/include)
+# target_compile_options(avmfuzz PRIVATE -fsanitize=fuzzer)

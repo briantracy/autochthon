@@ -19,6 +19,13 @@ TEST(ProgramTest, parseProgramFailures) {
         0xFF, 0xFF, 0xFF, 0x01
     }), ProgramLoadError);
 
+    // non increasing sections
+    EXPECT_THROW(Program({
+        0x00, 0x00, 0x00, 0x01,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0xc
+    }), ProgramLoadError);
+
 }
 
 TEST(ProgramTest, parseProgramBasic) {
@@ -31,4 +38,13 @@ TEST(ProgramTest, parseProgramBasic) {
     EXPECT_EQ(prog1.symbols, SymbolTable(std::vector<Symbol>{}));
     EXPECT_EQ(prog1.data, std::vector<VMByte>{0xDD});
     EXPECT_EQ(prog1.code, std::vector<VMByte>{0xCC});
+
+    const auto emptyProgram = Program({
+        0x00, 0x00, 0x00, 0x0c, // empty symbol table
+        0x00, 0x00, 0x00, 0x0c, // empty data
+        0x00, 0x00, 0x00, 0x0c, // empty code
+    });
+    EXPECT_EQ(emptyProgram.symbols, SymbolTable(std::vector<Symbol>{}));
+    EXPECT_EQ(emptyProgram.data, std::vector<VMByte>{});
+    EXPECT_EQ(emptyProgram.code, std::vector<VMByte>{});
 }
