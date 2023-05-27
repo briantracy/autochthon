@@ -11,6 +11,11 @@ class Interpreter {
     DebugMemory memory_;
     SymbolTable symbolTable_;
     Registers registers_;
+
+public:
+    Interpreter(DebugMemory memory, SymbolTable symbols, Registers regs);
+    void step();
+    void debug() const;
 };
 
 #endif
