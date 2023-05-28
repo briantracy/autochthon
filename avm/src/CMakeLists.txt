@@ -19,11 +19,12 @@ endif()
 file(GLOB libSources lib/include/libavm/*.h lib/*.cpp)
 add_library(avm ${libSources})
 target_compile_features(avm PUBLIC cxx_std_17)
+
+# target_compile_definitions(avm PRIVATE _FORTIFY_SOURCE=3) # apple clang is bad
 set_target_properties(avm PROPERTIES CXX_EXTENSIONS OFF)
 target_compile_options(avm PRIVATE
-    -Wall -Wextra -Wpedantic
-    -Wconversion -Wshadow -Wfloat-equal
-    -Wundef -Wcast-align
+    -Wall -Wextra -Wpedantic -Wconversion
+    -Wshadow -Wfloat-equal -Wundef -Wcast-align
     -fstack-protector-strong -fvisibility=hidden
     -fdiagnostics-show-template-tree
 )

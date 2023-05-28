@@ -48,3 +48,14 @@ TEST(ProgramTest, parseProgramBasic) {
     EXPECT_EQ(emptyProgram.data, std::vector<VMByte>{});
     EXPECT_EQ(emptyProgram.code, std::vector<VMByte>{});
 }
+
+TEST(ProgramTest, testProgramFromFile) {
+    const auto helloWorld = Program{"src/test/programs/hello_world.bin"};
+    EXPECT_EQ(
+        std::string(reinterpret_cast<const char *>(helloWorld.data.data())),
+        std::string{"hello world!"}
+    );
+    EXPECT_EQ(helloWorld.code, std::vector<VMByte>(8, 0xFF));
+
+    EXPECT_THROW(Program{"/not/existent/path"}, ProgramLoadError);
+}

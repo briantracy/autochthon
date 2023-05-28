@@ -1,8 +1,10 @@
 
+#include <iterator>
 #include <libavm/symbol.h>
 #include <libavm/intrinsic.h>
 #include <libavm/program.h>
 
+#include <fstream>
 #include <stdint.h>
 #include <string>
 #include <string_view>
@@ -39,8 +41,14 @@ ProgramOffsets parseSectionLocations(const std::vector<VMByte> &program) {
 }
 
 Program::Program(std::string_view filePath) {
-    (void)filePath;
-    throw ProgramLoadError{"notimplemented: loading program from file"};
+    std::ifstream source{filePath.data(), std::ios::binary};
+    if (!source) {
+        throw ProgramLoadError{"could not open program: " + std::string{filePath}};
+    }
+    parse(std::vector<VMByte>(
+        std::istreambuf_iterator<char>(source),
+        std::istreambuf_iterator<char>()
+    ));
 }
 
 Program::Program(const std::vector<VMByte> &rawBytes) {
