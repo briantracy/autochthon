@@ -4,6 +4,7 @@
 
 #include <libavm/intrinsic.h>
 #include <libavm/memory.h>
+#include <libavm/program.h>
 #include <libavm/register.h>
 #include <libavm/symbol.h>
 
@@ -13,7 +14,7 @@ class Interpreter {
     Registers registers_;
 
 public:
-    Interpreter(DebugMemory memory, SymbolTable symbols, Registers regs);
+    explicit Interpreter(const Program &);
     void step();
     void debug() const;
 };

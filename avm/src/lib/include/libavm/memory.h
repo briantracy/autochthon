@@ -5,6 +5,7 @@
 #include <libavm/intrinsic.h>
 
 #include <stdint.h>
+#include <stddef.h>
 #include <stdexcept>
 #include <vector>
 
@@ -21,6 +22,8 @@ struct Memory {
     virtual void writeByte(HostWord address, VMByte byte) = 0;
 
     virtual void map(HostWord startAddress, const std::vector<VMByte> &bytes) = 0;
+    virtual void readRawBytes(HostWord startAddress, size_t numBytes, std::vector<VMByte> &dest) = 0;
+    virtual std::string debug() const = 0;
 };
 
 struct MemoryError : public std::runtime_error {
@@ -41,6 +44,8 @@ public:
     VMByte readByte(HostWord address) const override;
     void writeByte(HostWord address, VMByte byte) override;
     void map(HostWord startAddress, const std::vector<VMByte> &bytes) override;
+    void readRawBytes(HostWord startAddress, size_t numBytes, std::vector<VMByte> &dest) override;
+    std::string debug() const override;
 };
 
 #endif

@@ -5,6 +5,7 @@
 #include <libavm/intrinsic.h>
 
 #include <array>
+#include <stddef.h>
 #include <stdint.h>
 
 enum class RegisterName : uint8_t {

@@ -25,7 +25,7 @@ set_target_properties(avm PROPERTIES CXX_EXTENSIONS OFF)
 target_compile_options(avm PRIVATE
     -Wall -Wextra -Wpedantic -Wconversion
     -Wshadow -Wfloat-equal -Wundef -Wcast-align
-    -fstack-protector-strong -fvisibility=hidden
+    -fstack-protector-strong
     -fdiagnostics-show-template-tree
 )
 target_include_directories(avm PRIVATE lib/include)

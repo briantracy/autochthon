@@ -45,6 +45,7 @@ Program::Program(std::string_view filePath) {
     if (!source) {
         throw ProgramLoadError{"could not open program: " + std::string{filePath}};
     }
+    // TODO(bct): probably wildly inefficient, use mmap
     parse(std::vector<VMByte>(
         std::istreambuf_iterator<char>(source),
         std::istreambuf_iterator<char>()
